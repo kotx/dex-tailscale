@@ -4,8 +4,7 @@ services:
     image: ghcr.io/dexidp/dex:latest
     volumes:
       - ./dex.yaml:/etc/dex/config.docker.yaml
-    depends_on:
-      - postgres
+      - dex_data:/var/dex
     environment:
       - ISSUER=${ISSUER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -42,17 +41,7 @@ services:
     expose:
       - 8080
 
-  postgres:
-    restart: unless-stopped
-    image: postgres:17
-    shm_size: 128mb
-    environment:
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=dex_db
-      - POSTGRES_USER=dex
-    expose:
-      - 5432
-
 volumes:
   caddy_data:
+  dex_data:
   tailscale_state:
