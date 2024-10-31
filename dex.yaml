@@ -1,4 +1,4 @@
-issuer: http://{{ .Env.ISSUER }}
+issuer: https://{{ .Env.ISSUER }}
 storage:
   type: postgres
   config:
