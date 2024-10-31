@@ -1,6 +1,6 @@
 # dex-tailscale
 
-Simple [Dex](https://dexidp.io) setup to POC using Cloudflare Access with Tailscale as an authentication source.
+Simple [Dex](https://dexidp.io) setup to POC using [Cloudflare Access](https://www.cloudflare.com/zero-trust/products/access/) with [Tailscale](https://tailscale.com) as an authentication source.
 
 ## Setup
 
