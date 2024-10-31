@@ -20,6 +20,7 @@ services:
       - TS_AUTHKEY=${TS_AUTHKEY}
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=false
+      - TS_HOSTNAME=dex
       - TS_SERVE_CONFIG=/config/funnel.json
     volumes:
       - tailscale_state:/var/lib/tailscale
