@@ -1,0 +1,23 @@
+issuer: http://{{ .Env.ISSUER }}
+storage:
+  type: postgres
+  config:
+    host: postgres
+    port: 5432
+    database: dex_db
+    user: dex
+    password: {{ .Env.POSTGRES_PASSWORD }}
+    ssl:
+      mode: disable
+web:
+  http: 0.0.0.0:5556
+staticClients:
+  - id: cloudflare
+    redirectURIs:
+      - "https://{{ .Env.CF_OIDC_SUBDOMAIN }}.cloudflareaccess.com/cdn-cgi/access/callback"
+    name: "Cloudflare Access"
+    secret: {{ .Env.CF_OIDC_SECRET }}
+connectors:
+  - type: authproxy
+    id: tailscale
+    name: Tailscale

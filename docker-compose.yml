@@ -1,24 +1,57 @@
 services:
   dex:
-    restart: always
-    container_name: dex
-    image: dexidp/dex:latest
+    restart: unless-stopped
+    image: ghcr.io/dexidp/dex:latest
     volumes:
-      - ./config.docker.yaml:/etc/dex/config.docker.yaml
+      - ./dex.yaml:/etc/dex/config.docker.yaml
+    depends_on:
+      - postgres
+    environment:
+      - ISSUER=${ISSUER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - CF_OIDC_SECRET=${CF_OIDC_SECRET}
+      - CF_OIDC_SUBDOMAIN=${CF_OIDC_SUBDOMAIN}
     expose:
       - 5556
 
+  tailscale:
+    image: tailscale/tailscale:latest
+    environment:
+      - TS_AUTHKEY=${TS_AUTHKEY}
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+      - TS_SERVE_CONFIG=/config/funnel.json
+    volumes:
+      - tailscale_state:/var/lib/tailscale
+      - ${PWD}/funnel.json:/config/funnel.json
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    restart: unless-stopped
+
   caddy:
-    restart: always
-    container_name: caddy
-    build:
-      context: .
-      dockerfile: ./caddy.dockerfile
+    restart: unless-stopped
+    image: caddy:2.8.4
     volumes:
       - caddy_data:/data
       - ${PWD}/Caddyfile:/etc/caddy/Caddyfile:ro
-    ports:
-      - 8080:8080
+    depends_on:
+      - tailscale
+    expose:
+      - 8080
+
+  postgres:
+    restart: unless-stopped
+    image: postgres:17
+    shm_size: 128mb
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=dex_db
+      - POSTGRES_USER=dex
+    expose:
+      - 5432
 
 volumes:
   caddy_data:
+  tailscale_state:

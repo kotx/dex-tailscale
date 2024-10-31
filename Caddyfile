@@ -1,3 +1,7 @@
-:8080
-
-reverse_proxy dex:5556
+:8080 {
+  log
+  reverse_proxy dex:5556 {
+    header_up X-Remote-User {http.request.header.Tailscale-User-Login}
+    header_up X-Remote-Name {http.request.header.Tailscale-User-Name}
+  }
+}
