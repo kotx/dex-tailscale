@@ -15,5 +15,3 @@ connectors:
   - type: authproxy
     id: tailscale
     name: Tailscale
-oauth2:
-  skipApprovalScreen: true
