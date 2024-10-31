@@ -1,0 +1,24 @@
+services:
+  dex:
+    restart: always
+    container_name: dex
+    image: dexidp/dex:latest
+    volumes:
+      - ./config.docker.yaml:/etc/dex/config.docker.yaml
+    expose:
+      - 5556
+
+  caddy:
+    restart: always
+    container_name: caddy
+    build:
+      context: .
+      dockerfile: ./caddy.dockerfile
+    volumes:
+      - caddy_data:/data
+      - ${PWD}/Caddyfile:/etc/caddy/Caddyfile:ro
+    ports:
+      - 8080:8080
+
+volumes:
+  caddy_data:
