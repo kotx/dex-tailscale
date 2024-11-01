@@ -3,6 +3,8 @@
   request_header -X-Remote-*
 
   reverse_proxy dex:5556 {
-    header_up X-Remote-User {http.request.header.Tailscale-User-Login}
+    header_up X-Remote-User-Id {http.request.header.Tailscale-User-Login} # id
+    header_up X-Remote-User {http.request.header.Tailscale-User-Name} # username, preferred username
+    header_up X-Remote-User-Email {http.request.header.Tailscale-User-Login} # email (assumed to be verified)
   }
 }
