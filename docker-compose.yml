@@ -7,7 +7,6 @@ services:
       - dex_data:/var/dex
     environment:
       - ISSUER=${ISSUER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - CF_OIDC_SECRET=${CF_OIDC_SECRET}
       - CF_OIDC_SUBDOMAIN=${CF_OIDC_SUBDOMAIN}
     expose:
