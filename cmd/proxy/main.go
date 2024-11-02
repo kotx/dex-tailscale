@@ -30,7 +30,11 @@ func main() {
 		req.URL.Scheme = endpointUrl.Scheme
 		req.RequestURI = ""
 
-		slog.Info("proxying", "method", req.Method, "url", req.URL, "remote_addr", req.RemoteAddr)
+		slog.Info("proxying", slog.Group("request",
+			"method", req.Method,
+			"url", req.URL,
+			"remote_addr", req.RemoteAddr,
+		))
 
 		res, err := http.DefaultClient.Do(req)
 		if err != nil {
