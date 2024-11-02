@@ -9,7 +9,9 @@ RUN go mod download && go mod verify
 COPY ./cmd/proxy ./cmd/proxy
 RUN go vet -v ./cmd/proxy
 
-RUN CGO_ENABLED=0 go build -o /go/bin/proxy ./cmd/proxy
+ARG TARGETARCH
+RUN CGO_ENABLED=0 GOARCH=${TARGETARCH} \
+    go build -o /go/bin/proxy ./cmd/proxy
 
 FROM gcr.io/distroless/static-debian12
 
