@@ -5,17 +5,14 @@ services:
     volumes:
       - ./dex.yaml:/etc/dex/config.docker.yaml
       - dex_data:/var/dex
-    environment:
-      - ISSUER=${ISSUER}
-      - CF_OIDC_SECRET=${CF_OIDC_SECRET}
-      - CF_OIDC_SUBDOMAIN=${CF_OIDC_SUBDOMAIN}
+    env_file: dex.env
     expose:
       - 5556
 
   tailscale:
     image: tailscale/tailscale:latest
+    env_file: tailscale.env
     environment:
-      - TS_AUTHKEY=${TS_AUTHKEY}
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=false
       - TS_HOSTNAME=dex
