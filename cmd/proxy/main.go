@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"log/slog"
 	"net/http"
@@ -76,14 +77,11 @@ func main() {
 		}
 		writer.WriteHeader(res.StatusCode)
 
-		var buf []byte
-		_, err = res.Body.Read(buf)
+		_, err = io.Copy(writer, res.Body)
+		defer res.Body.Close()
 		if err != nil {
 			slog.Error("reading response body", "err", err)
 		}
-		defer res.Body.Close()
-
-		writer.Write(buf)
 	})
 	http.ListenAndServe(":8080", nil)
 }
