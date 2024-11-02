@@ -59,7 +59,7 @@ func main() {
 
 				req.Header["X-Remote-User"] = value
 			default:
-				req.Header[key] = value
+				slog.Debug("allowing header", "key", key)
 			}
 		}
 
