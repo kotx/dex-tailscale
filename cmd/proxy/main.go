@@ -44,6 +44,7 @@ func main() {
 
 		for key, value := range req.Header {
 			if strings.HasPrefix(http.CanonicalHeaderKey("X-Remote-"), key) {
+				slog.Info("removing spoofed header", "key", key, "value", value)
 				req.Header.Del(key)
 			}
 
