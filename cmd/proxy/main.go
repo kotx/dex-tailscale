@@ -71,6 +71,9 @@ func main() {
 			return
 		}
 
+		for key, value := range res.Header {
+			writer.Header()[key] = value
+		}
 		writer.WriteHeader(res.StatusCode)
 
 		var buf []byte
