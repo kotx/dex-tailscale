@@ -1,9 +1,9 @@
 FROM golang:1.23 as build
 
 WORKDIR /go/src/app
-COPY go.mod ./cmd .
+COPY go.mod ./cmd/proxy .
 
-RUN CGO_ENABLED=0 go build -o /go/bin/proxy
+RUN CGO_ENABLED=0 go build -o /go/bin/proxy ./cmd/proxy
 
 FROM gcr.io/distroless/static-debian12
 
