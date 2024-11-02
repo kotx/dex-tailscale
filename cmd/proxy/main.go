@@ -29,8 +29,10 @@ func main() {
 		log.Fatalf("endpoint must be a valid url: %v", err)
 	}
 
-	serve := new(tsnet.Server)
-	serve.Hostname = *tsHost
+	serve := &tsnet.Server{
+		Hostname: *tsHost,
+		Dir:      "/state",
+	}
 	defer serve.Close()
 
 	ln, err := serve.ListenFunnel("tcp", ":443")

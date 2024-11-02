@@ -14,8 +14,11 @@ services:
     # build:
     #   context: .
     #   dockerfile: ./Dockerfile
+    volumes:
+      - tailscale_state:/state
     env_file: tailscale.env
     restart: unless-stopped
 
 volumes:
   dex_data:
+  tailscale_state:
