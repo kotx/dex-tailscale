@@ -1,6 +1,5 @@
 services:
   dex:
-    restart: unless-stopped
     image: ghcr.io/dexidp/dex:latest
     volumes:
       - ./dex.yaml:/etc/dex/config.docker.yaml
@@ -8,6 +7,7 @@ services:
     env_file: dex.env
     expose:
       - 5556
+    restart: unless-stopped
 
   tailscale:
     image: tailscale/tailscale:latest
@@ -26,18 +26,16 @@ services:
       - sys_module
     restart: unless-stopped
 
-  caddy:
-    restart: unless-stopped
-    image: caddy:2.8.4
-    volumes:
-      - caddy_data:/data
-      - ${PWD}/Caddyfile:/etc/caddy/Caddyfile:ro
+  proxy:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
     depends_on:
       - tailscale
     expose:
       - 8080
+    restart: unless-stopped
 
 volumes:
-  caddy_data:
   dex_data:
   tailscale_state:
