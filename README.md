@@ -1,6 +1,14 @@
 # dex-tailscale
 
-Simple [Dex](https://dexidp.io) setup to POC using [Cloudflare Access](https://www.cloudflare.com/zero-trust/products/access/) with [Tailscale](https://tailscale.com) as an authentication source.
+Simple [Dex](https://dexidp.io) setup to authenticate with [Tailscale](https://tailscale.com).
+
+This means you can login to services that support OIDC authentication using only your Tailscale IP!
+
+## Demo
+
+Here is an example video of authenticating to [Cloudflare Access](https://www.cloudflare.com/zero-trust/products/access/) with Tailscale:
+
+![gif showing login to cloudflare access using dex-tailscale](./readme/cloudflare-access.gif)
 
 ## Setup
 
