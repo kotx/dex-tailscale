@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -9,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 var endpoint = flag.String("endpoint", "http://dex:5556", "the host to proxy requests to")
@@ -29,6 +31,7 @@ func main() {
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
 		},
+		Timeout: time.Minute,
 	}
 
 	http.HandleFunc("/", func(writer http.ResponseWriter, req *http.Request) {
@@ -66,7 +69,13 @@ func main() {
 
 		res, err := httpClient.Do(req)
 		if err != nil {
-			writer.WriteHeader(http.StatusBadGateway)
+			var urlError *url.Error
+			if errors.As(err, &urlError) && urlError.Timeout() {
+				writer.WriteHeader(http.StatusGatewayTimeout)
+			} else {
+				writer.WriteHeader(http.StatusBadGateway)
+			}
+
 			_, _ = fmt.Fprint(writer, err)
 			slog.Error("proxying request", "err", err)
 			return
