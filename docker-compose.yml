@@ -10,9 +10,10 @@ services:
     restart: unless-stopped
 
   proxy:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
+    image: ghcr.io/kotx/dex-tailscale:latest
+    # build:
+    #   context: .
+    #   dockerfile: ./Dockerfile
     restart: unless-stopped
 
 volumes:
