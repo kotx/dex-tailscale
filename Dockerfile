@@ -1,7 +1,7 @@
-FROM golang:1.23 as build
+FROM golang:1.23 AS build
 
 WORKDIR /go/src/app
-COPY go.mod ./cmd/proxy .
+COPY go.mod ./cmd .
 
 RUN CGO_ENABLED=0 go build -o /go/bin/proxy ./cmd/proxy
 
