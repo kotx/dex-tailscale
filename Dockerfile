@@ -1,13 +1,11 @@
-FROM golang:1.23
+FROM golang:1.23 as build
 
-WORKDIR /usr/src/app
+WORKDIR /go/src/app
+COPY go.mod ./cmd .
 
-COPY go.mod ./
-# # pre-copy/cache go.mod for pre-downloading dependencies and only redownloading them in subsequent builds if they change
-# COPY go.mod go.sum ./
-# RUN go mod download && go mod verify
+RUN CGO_ENABLED=0 go build -o /go/bin/proxy
 
-COPY ./cmd .
-RUN go build -v -o /usr/local/bin/proxy ./cmd/proxy
+FROM gcr.io/distroless/static-debian12
 
-CMD ["proxy"]
+COPY --from=build /go/bin/proxy /
+CMD ["/proxy"]
