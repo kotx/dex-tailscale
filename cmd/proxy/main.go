@@ -57,18 +57,20 @@ func main() {
 
 			switch key {
 			case http.CanonicalHeaderKey("Tailscale-User-Login"):
-				slog.Info("header", "tailscale-user-login", value)
+				slog.Debug("header", "tailscale-user-login", value)
 
 				w.Header()["X-Remote-User-Id"] = value
 				w.Header()["X-Remote-User-Email"] = value
 			case http.CanonicalHeaderKey("Tailscale-User-Name"):
-				slog.Info("header", "tailscale-user-name", value)
+				slog.Debug("header", "tailscale-user-name", value)
 
 				w.Header()["X-Remote-User"] = value
 			default:
 				w.Header()[key] = value
 			}
 		}
+
+		w.WriteHeader(res.StatusCode)
 
 		var buf []byte
 		_, err = res.Body.Read(buf)
