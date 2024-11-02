@@ -30,7 +30,7 @@ func main() {
 		},
 	}
 
-	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+	http.HandleFunc("/", func(writer http.ResponseWriter, req *http.Request) {
 		req.Host = endpointUrl.Host
 		req.URL.Host = endpointUrl.Host
 		req.URL.Scheme = endpointUrl.Scheme
@@ -42,35 +42,35 @@ func main() {
 			"remote_addr", req.RemoteAddr,
 		))
 
-		res, err := httpClient.Do(req)
-		if err != nil {
-			w.WriteHeader(http.StatusBadGateway)
-			_, _ = fmt.Fprint(w, err)
-			slog.Error("proxying request", "err", err)
-			return
-		}
-
 		for key, value := range req.Header {
 			if strings.HasPrefix(http.CanonicalHeaderKey("X-Remote-"), key) {
-				continue
+				req.Header.Del(key)
 			}
 
 			switch key {
 			case http.CanonicalHeaderKey("Tailscale-User-Login"):
 				slog.Debug("header", "tailscale-user-login", value)
 
-				w.Header()["X-Remote-User-Id"] = value
-				w.Header()["X-Remote-User-Email"] = value
+				req.Header["X-Remote-User-Id"] = value
+				req.Header["X-Remote-User-Email"] = value
 			case http.CanonicalHeaderKey("Tailscale-User-Name"):
 				slog.Debug("header", "tailscale-user-name", value)
 
-				w.Header()["X-Remote-User"] = value
+				req.Header["X-Remote-User"] = value
 			default:
-				w.Header()[key] = value
+				req.Header[key] = value
 			}
 		}
 
-		w.WriteHeader(res.StatusCode)
+		res, err := httpClient.Do(req)
+		if err != nil {
+			writer.WriteHeader(http.StatusBadGateway)
+			_, _ = fmt.Fprint(writer, err)
+			slog.Error("proxying request", "err", err)
+			return
+		}
+
+		writer.WriteHeader(res.StatusCode)
 
 		var buf []byte
 		_, err = res.Body.Read(buf)
@@ -79,7 +79,7 @@ func main() {
 		}
 		defer res.Body.Close()
 
-		w.Write(buf)
+		writer.Write(buf)
 	})
 	http.ListenAndServe(":8080", nil)
 }
