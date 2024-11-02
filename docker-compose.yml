@@ -9,33 +9,11 @@ services:
       - 5556
     restart: unless-stopped
 
-  tailscale:
-    image: tailscale/tailscale:latest
-    env_file: tailscale.env
-    environment:
-      - TS_STATE_DIR=/var/lib/tailscale
-      - TS_USERSPACE=false
-      - TS_HOSTNAME=dex
-      - TS_SERVE_CONFIG=/config/funnel.json
-    volumes:
-      - tailscale_state:/var/lib/tailscale
-      - ${PWD}/funnel.json:/config/funnel.json
-      - /dev/net/tun:/dev/net/tun
-    cap_add:
-      - net_admin
-      - sys_module
-    restart: unless-stopped
-
   proxy:
     build:
       context: .
       dockerfile: ./Dockerfile
-    depends_on:
-      - tailscale
-    expose:
-      - 8080
     restart: unless-stopped
 
 volumes:
   dex_data:
-  tailscale_state:
