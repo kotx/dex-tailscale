@@ -82,9 +82,9 @@ func main() {
 				}
 
 				if who != nil {
-					req.Header.Set("X-Remote-Email", who.UserProfile.LoginName)
-					req.Header.Set("X-Remote-User-Id", who.UserProfile.ID.String())
+					req.Header.Set("X-Remote-User-Email", who.UserProfile.LoginName)
 					req.Header.Set("X-Remote-User", who.UserProfile.DisplayName)
+					req.Header.Set("X-Remote-User-Id", who.UserProfile.ID.String())
 				}
 
 				res, err := httpClient.Do(req)
