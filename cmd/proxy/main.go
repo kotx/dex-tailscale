@@ -24,6 +24,12 @@ func main() {
 
 	log.Printf("proxying requests to %s", endpointUrl)
 
+	httpClient := &http.Client{
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
+
 	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
 		req.Host = endpointUrl.Host
 		req.URL.Host = endpointUrl.Host
@@ -36,7 +42,7 @@ func main() {
 			"remote_addr", req.RemoteAddr,
 		))
 
-		res, err := http.DefaultClient.Do(req)
+		res, err := httpClient.Do(req)
 		if err != nil {
 			w.WriteHeader(http.StatusBadGateway)
 			_, _ = fmt.Fprint(w, err)
@@ -51,9 +57,13 @@ func main() {
 
 			switch key {
 			case http.CanonicalHeaderKey("Tailscale-User-Login"):
+				slog.Info("header", "tailscale-user-login", value)
+
 				w.Header()["X-Remote-User-Id"] = value
 				w.Header()["X-Remote-User-Email"] = value
 			case http.CanonicalHeaderKey("Tailscale-User-Name"):
+				slog.Info("header", "tailscale-user-name", value)
+
 				w.Header()["X-Remote-User"] = value
 			default:
 				w.Header()[key] = value
