@@ -8,7 +8,6 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"strings"
-	"time"
 
 	"tailscale.com/client/tailscale"
 	"tailscale.com/tsnet"
@@ -44,14 +43,6 @@ func main() {
 	}
 
 	log.Printf("proxying requests to %s", endpointUrl)
-
-	httpClient := &http.Client{
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			return http.ErrUseLastResponse
-		},
-		Timeout: time.Minute,
-	}
-
 	log.Fatal(http.Serve(ln,
 		http.HandlerFunc(
 			func(writer http.ResponseWriter, req *http.Request) {
