@@ -1,13 +1,11 @@
 package main
 
 import (
-	"errors"
 	"flag"
-	"fmt"
-	"io"
 	"log"
 	"log/slog"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"strings"
 	"time"
@@ -89,29 +87,7 @@ func main() {
 					req.Header.Set("X-Remote-User-Id", who.UserProfile.ID.String())
 				}
 
-				res, err := httpClient.Do(req)
-				if err != nil {
-					var urlError *url.Error
-					if errors.As(err, &urlError) && urlError.Timeout() {
-						writer.WriteHeader(http.StatusGatewayTimeout)
-					} else {
-						writer.WriteHeader(http.StatusBadGateway)
-					}
-
-					_, _ = fmt.Fprint(writer, err)
-					slog.Error("proxying request", "err", err)
-					return
-				}
-
-				for key, value := range res.Header {
-					writer.Header()[key] = value
-				}
-				writer.WriteHeader(res.StatusCode)
-
-				_, err = io.Copy(writer, res.Body)
-				defer res.Body.Close()
-				if err != nil {
-					slog.Error("reading response body", "err", err)
-				}
+				proxy := httputil.NewSingleHostReverseProxy(endpointUrl)
+				proxy.ServeHTTP(writer, req)
 			})))
 }
