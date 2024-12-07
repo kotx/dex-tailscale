@@ -42,7 +42,9 @@ func main() {
 		log.Fatalf("error creating tailscale local client: %v", err)
 	}
 
+	proxy := httputil.NewSingleHostReverseProxy(endpointUrl)
 	log.Printf("proxying requests to %s", endpointUrl)
+
 	log.Fatal(http.Serve(ln,
 		http.HandlerFunc(
 			func(writer http.ResponseWriter, req *http.Request) {
@@ -74,7 +76,6 @@ func main() {
 					req.Header.Set("X-Remote-User-Id", who.UserProfile.ID.String())
 				}
 
-				proxy := httputil.NewSingleHostReverseProxy(endpointUrl)
 				proxy.ServeHTTP(writer, req)
 			})))
 }
