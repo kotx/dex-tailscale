@@ -64,7 +64,7 @@ func main() {
 
 				req.Host = endpointUrl.Host
 				for key, value := range req.Header {
-					if strings.HasPrefix(http.CanonicalHeaderKey("X-Remote-"), key) || strings.HasPrefix(http.CanonicalHeaderKey("X-Forwarded-For"), key) {
+					if strings.HasPrefix(http.CanonicalHeaderKey("X-Remote-"), key) {
 						slog.Info("removing spoofed header", "key", key, "value", value)
 						req.Header.Del(key)
 					}
