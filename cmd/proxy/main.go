@@ -18,8 +18,8 @@ var tsHost = flag.String("hostname", "dex", "hostname to use in the tailnet")
 var endpoint = flag.String("endpoint", "http://dex:5556", "the Dex host to proxy requests to")
 
 func main() {
-	logLevel := slog.Level(*logLevel)
-	slog.SetLogLoggerLevel(logLevel)
+	// logLevel := slog.Level(*logLevel)
+	slog.SetLogLoggerLevel(slog.LevelError)
 
 	flag.Parse()
 	if *endpoint == "" {
