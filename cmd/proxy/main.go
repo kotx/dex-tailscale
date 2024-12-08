@@ -74,7 +74,16 @@ func main() {
 					http.Error(writer, err.Error(), 500)
 					return
 				}
-				slog.Debug("tailscale", "whois", who)
+
+				if who != nil {
+					slog.Debug("tailscale", slog.Group("whois",
+						"node", who.Node.Name,
+						"login_name", strings.ToLower(who.UserProfile.LoginName),
+						"display_name", strings.ToLower(who.UserProfile.DisplayName),
+					))
+				} else {
+					slog.Debug("tailscale", "whois", nil)
+				}
 
 				req.Host = endpointUrl.Host
 				for key, value := range req.Header {
