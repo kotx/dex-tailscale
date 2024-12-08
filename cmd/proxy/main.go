@@ -75,19 +75,6 @@ func main() {
 					return
 				}
 
-				if who != nil {
-					slog.Debug("tailscale", slog.Group("whois",
-						slog.Group("node", "id", who.Node.ID, "name", who.Node.Name),
-						slog.Group("user",
-							"id", who.UserProfile.ID,
-							"login_name", strings.ToLower(who.UserProfile.LoginName),
-							"display_name", strings.ToLower(who.UserProfile.DisplayName),
-						),
-					))
-				} else {
-					slog.Debug("tailscale", "whois", nil)
-				}
-
 				req.Host = endpointUrl.Host
 				for key, value := range req.Header {
 					if strings.HasPrefix(http.CanonicalHeaderKey("X-Remote-"), key) {
@@ -97,9 +84,23 @@ func main() {
 				}
 
 				if who != nil {
-					req.Header.Set("X-Remote-User-Email", strings.ToLower(who.UserProfile.LoginName))
-					req.Header.Set("X-Remote-User", who.UserProfile.DisplayName)
+					userName, _, _ := strings.Cut(who.UserProfile.DisplayName, "@")
+					loginName := strings.ToLower(who.UserProfile.LoginName)
+
+					slog.Debug("tailscale", slog.Group("whois",
+						slog.Group("node", "id", who.Node.ID, "name", who.Node.Name),
+						slog.Group("user",
+							"id", who.UserProfile.ID,
+							"login_name", loginName,
+							"username", userName,
+						),
+					))
+
+					req.Header.Set("X-Remote-User-Email", loginName) // emailish
+					req.Header.Set("X-Remote-User", userName)        // username AND preferred username
 					req.Header.Set("X-Remote-User-Id", who.UserProfile.ID.String())
+				} else {
+					slog.Debug("tailscale", "whois", nil)
 				}
 
 				proxy.ServeHTTP(writer, req)
