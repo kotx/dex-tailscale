@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"os"
 	"strings"
 
 	"tailscale.com/client/tailscale"
@@ -19,10 +18,8 @@ var tsHost = flag.String("hostname", "dex", "hostname to use in the tailnet")
 var endpoint = flag.String("endpoint", "http://dex:5556", "the Dex host to proxy requests to")
 
 func main() {
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-		Level: slog.Level(*logLevel),
-	}))
-	slog.SetDefault(logger)
+	logLevel := slog.Level(*logLevel)
+	slog.SetLogLoggerLevel(logLevel)
 
 	flag.Parse()
 	if *endpoint == "" {
