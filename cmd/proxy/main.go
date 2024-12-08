@@ -96,9 +96,16 @@ func main() {
 						),
 					))
 
-					req.Header.Set("X-Remote-User-Email", loginName) // emailish
-					req.Header.Set("X-Remote-User", userName)        // username AND preferred username
-					req.Header.Set("X-Remote-User-Id", who.UserProfile.ID.String())
+					// Disallow tagged devices (the username is shared, which leads to unexpected behavior).
+					// This also prevents funnel from being "authenticated" with the following credentials:
+					//   node(id=nodeid:f3e4fcf98730b3, name="")
+					//   user(id=userid:6a98d6d013b0f, login_name=tagged-devices, display_name="tagged devices")
+					if loginName != "tagged-devices" {
+						// https://github.com/dexidp/dex/blob/master/connector/authproxy/authproxy.go
+						req.Header.Set("X-Remote-User-Email", loginName) // emailish
+						req.Header.Set("X-Remote-User", userName)        // user name (full name) AND preferred username (shorthand)
+						req.Header.Set("X-Remote-User-Id", who.UserProfile.ID.String())
+					}
 				} else {
 					slog.Debug("tailscale", "whois", nil)
 				}
