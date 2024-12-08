@@ -77,9 +77,12 @@ func main() {
 
 				if who != nil {
 					slog.Debug("tailscale", slog.Group("whois",
-						"node", who.Node.Name,
-						"login_name", strings.ToLower(who.UserProfile.LoginName),
-						"display_name", strings.ToLower(who.UserProfile.DisplayName),
+						slog.Group("node", "id", who.Node.ID, "name", who.Node.Name),
+						slog.Group("user",
+							"id", who.UserProfile.ID,
+							"login_name", strings.ToLower(who.UserProfile.LoginName),
+							"display_name", strings.ToLower(who.UserProfile.DisplayName),
+						),
 					))
 				} else {
 					slog.Debug("tailscale", "whois", nil)
