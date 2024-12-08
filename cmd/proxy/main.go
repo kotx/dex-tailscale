@@ -24,19 +24,20 @@ func ParseLevel(s string) (slog.Level, error) {
 }
 
 func main() {
+	flag.Parse()
+
 	logLevel, err := ParseLevel(*logLevel)
 	if err != nil {
 		log.Fatal("error parsing log level: ", err)
 	}
 	slog.SetLogLoggerLevel(logLevel)
 
-	flag.Parse()
 	if *endpoint == "" {
-		log.Fatalf("endpoint must be set")
+		log.Fatal("endpoint must be set")
 	}
 	endpointUrl, err := url.Parse(*endpoint)
 	if err != nil {
-		log.Fatalf("endpoint must be a valid url: %v", err)
+		log.Fatal("endpoint must be a valid url: ", err)
 	}
 
 	serve := &tsnet.Server{
@@ -47,16 +48,16 @@ func main() {
 
 	ln, err := serve.ListenFunnel("tcp", ":443")
 	if err != nil {
-		log.Fatalf("error listening on funnel: %v", err)
+		log.Fatal("error listening on funnel: ", err)
 	}
 
 	lc, err := serve.LocalClient()
 	if err != nil {
-		log.Fatalf("error creating tailscale local client: %v", err)
+		log.Fatal("error creating tailscale local client: ", err)
 	}
 
 	proxy := httputil.NewSingleHostReverseProxy(endpointUrl)
-	log.Printf("proxying requests to %s", endpointUrl)
+	slog.Info("proxying requests", "to", endpointUrl)
 
 	log.Fatal(http.Serve(ln,
 		http.HandlerFunc(
