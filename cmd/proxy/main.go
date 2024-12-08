@@ -84,7 +84,7 @@ func main() {
 				}
 
 				if who != nil {
-					userName, _, _ := strings.Cut(who.UserProfile.DisplayName, "@")
+					userName, _, _ := strings.Cut(who.UserProfile.LoginName, "@")
 					loginName := strings.ToLower(who.UserProfile.LoginName)
 
 					slog.Debug("tailscale", slog.Group("whois",
