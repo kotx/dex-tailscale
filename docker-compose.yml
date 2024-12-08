@@ -14,6 +14,12 @@ services:
     # build:
     #   context: .
     #   dockerfile: ./Dockerfile
+    command: [
+        # log level (-4=debug,0=info,4=warn,8=error)
+        "-logLevel", "-4",
+        # "-hostname", "dex",
+        # "-endpoint", "http://dex:5556",
+      ]
     volumes:
       - tailscale_state:/state
     env_file: tailscale.env
