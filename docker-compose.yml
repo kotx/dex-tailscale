@@ -15,8 +15,8 @@ services:
     #   context: .
     #   dockerfile: ./Dockerfile
     command: [
-        # log level (-4=debug,0=info,4=warn,8=error)
-        "-logLevel", "-4",
+        # log level (DEBUG, INFO, WARN, ERROR)
+        "-logLevel", "INFO",
         # "-hostname", "dex",
         # "-endpoint", "http://dex:5556",
       ]

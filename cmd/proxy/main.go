@@ -13,12 +13,21 @@ import (
 	"tailscale.com/tsnet"
 )
 
-var logLevel = flag.Int("logLevel", int(slog.LevelInfo), "log level (-4=debug,0=info,4=warn,8=error)")
+var logLevel = flag.String("logLevel", "INFO", "log level (DEBUG, INFO, WARN, ERROR)")
 var tsHost = flag.String("hostname", "dex", "hostname to use in the tailnet")
 var endpoint = flag.String("endpoint", "http://dex:5556", "the Dex host to proxy requests to")
 
+func ParseLevel(s string) (slog.Level, error) {
+	var level slog.Level
+	var err = level.UnmarshalText([]byte(s))
+	return level, err
+}
+
 func main() {
-	logLevel := slog.Level(*logLevel)
+	logLevel, err := ParseLevel(*logLevel)
+	if err != nil {
+		log.Fatal("error parsing log level: ", err)
+	}
 	slog.SetLogLoggerLevel(logLevel)
 
 	flag.Parse()
