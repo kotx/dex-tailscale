@@ -4,6 +4,8 @@ Simple [Dex](https://dexidp.io) setup to authenticate with [Tailscale](https://t
 
 This means you can login to services that support OIDC authentication using only your Tailscale IP!
 
+**Note:** You can (and should) try Tailscale's [tsidp](https://pkg.go.dev/tailscale.com/cmd/tsidp) instead if you only need auth via Tailscale!
+
 ## Demo
 
 Here is an example video of authenticating to [Cloudflare Access](https://www.cloudflare.com/zero-trust/products/access/) with Tailscale:
