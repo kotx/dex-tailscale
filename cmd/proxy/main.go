@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"strings"
 
-	"tailscale.com/client/tailscale"
+	"tailscale.com/client/local"
 	"tailscale.com/tsnet"
 )
 
@@ -69,7 +69,7 @@ func main() {
 				))
 
 				who, err := lc.WhoIs(req.Context(), req.RemoteAddr)
-				if err != nil && err != tailscale.ErrPeerNotFound {
+				if err != nil && err != local.ErrPeerNotFound {
 					slog.Error("tailscale whois", "err", err)
 					http.Error(writer, err.Error(), 500)
 					return
