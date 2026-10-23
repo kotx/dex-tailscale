@@ -1,5 +1,5 @@
 FROM --platform=${BUILDPLATFORM} \
-    golang:1.26 AS build
+    golang:1.27 AS build
 
 WORKDIR /go/src/app
 
